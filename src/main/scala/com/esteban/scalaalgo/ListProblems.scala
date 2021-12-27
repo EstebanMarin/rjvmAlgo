@@ -12,6 +12,7 @@ sealed abstract class RList[+T]:
   def length: Int
   def reverse: RList[T]
   def ++[S >: T](anotherList: RList[S]): RList[S]
+  def remove(k: Int): RList[T]
 
 object RList:
   def from[T](iterable: Iterable[T]): RList[T] =
@@ -29,6 +30,7 @@ case object RNill extends RList[Nothing]:
   override def length = 0
   override def reverse = throw new NoSuchElementException
   def ++[S >: Nothing](anotherList: RList[S]): RList[S] = anotherList
+  def remove(k: Int): RList[Nothing] = throw new NoSuchElementException
 
 case class ::[+T](override val head: T, override val tail: RList[T]) extends RList[T]:
   override val isEmpty = false
@@ -53,18 +55,11 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       else toStringTail(remaining.tail, s"${result}${remaining.head},  ")
     "[" + toStringTail(this, "") + "]"
   override def reverse =
-    /*
-    [1,2,3].reverse = reversRec([1] :: RNill,[2,3]) =
-        reverseRec([2] :: [1] :: RNill, [3])
-        reverRec([3]::[2]::[1]:: RNill, [])
-     */
     @tailrec
     def reverseRec(result: RList[T], remaining: RList[T]): RList[T] =
       if (remaining.isEmpty) result
       else reverseRec(remaining.head :: result, remaining.tail)
     reverseRec(head :: RNill, tail)
-
-  // def ++[S >: T](anotherList: RList[S]): RList[S] = head :: (tail ++ anotherList) // this is not stack safe
   def ++[S >: T](anotherList: RList[S]): RList[S] =
     @tailrec
     def concantTailRec(remaining: RList[S], acc: RList[S]): RList[S] =
@@ -72,11 +67,25 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       else concantTailRec(remaining.tail, remaining.head :: acc)
     concantTailRec(this.reverse, anotherList)
 
+  def remove(k: Int): RList[T] =
+    @tailrec
+    def removeTailRec(
+        remaining: RList[T],
+        acc: RList[T],
+        iteration: Int,
+      ): RList[T] =
+      if (iteration == k) acc.tail.reverse ++ (remaining.head :: remaining.tail)
+      else removeTailRec(remaining.tail, remaining.head :: acc, iteration + 1)
+    removeTailRec(tail, head :: RNill, 0)
+
 @main def firstMain =
   val nList = 1 :: 2 :: 3 :: RNill
+  println("-" * 50)
 //   println(nList(2))
 //   println(nList.length)
-  println(nList.reverse)
-  println(RList.from(1 to 10).reverse)
+  // println(nList.reverse)
+  // println(RList.from(1 to 10).reverse)
+  println(RList.from(1 to 10).remove(6))
+  println("-" * 50)
 
 object ListProblems
