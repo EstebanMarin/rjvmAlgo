@@ -119,10 +119,12 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
     rleTail(RNill, (head, 1), tail).reverse
   override def duplicateElements(k: Int): RList[T] =
     def duplicateEach(head: T): RList[T] =
+      @tailrec
       def duplicateEachTailRec(iteration: Int, acc: RList[T]): RList[T] =
         if (iteration == k) acc
         else duplicateEachTailRec(iteration + 1, head :: acc)
       duplicateEachTailRec(0, RNill)
+    @tailrec
     def duplicateTailRec(acc: RList[T], remaining: RList[T]): RList[T] =
       if (remaining.isEmpty) acc.reverse
       else duplicateTailRec(duplicateEach(remaining.head) ++ acc, remaining.tail)
