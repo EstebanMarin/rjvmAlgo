@@ -11,6 +11,7 @@ sealed abstract class RList[+T]:
   def apply(index: Int): T
   def length: Int
   def reverse: RList[T]
+  def ++[S >: T](anotherList: RList[S]): RList[S]
 
 object RList:
   def from[T](iterable: Iterable[T]): RList[T] =
@@ -27,6 +28,7 @@ case object RNill extends RList[Nothing]:
   override def apply(index: Int): Nothing = throw new NoSuchElementException
   override def length = 0
   override def reverse = throw new NoSuchElementException
+  def ++[S >: Nothing](anotherList: RList[S]): RList[S] = anotherList
 
 case class ::[+T](override val head: T, override val tail: RList[T]) extends RList[T]:
   override val isEmpty = false
@@ -55,13 +57,20 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
     [1,2,3].reverse = reversRec([1] :: RNill,[2,3]) =
         reverseRec([2] :: [1] :: RNill, [3])
         reverRec([3]::[2]::[1]:: RNill, [])
-
      */
     @tailrec
     def reverseRec(result: RList[T], remaining: RList[T]): RList[T] =
       if (remaining.isEmpty) result
       else reverseRec(remaining.head :: result, remaining.tail)
     reverseRec(head :: RNill, tail)
+
+  // def ++[S >: T](anotherList: RList[S]): RList[S] = head :: (tail ++ anotherList) // this is not stack safe
+  def ++[S >: T](anotherList: RList[S]): RList[S] =
+    @tailrec
+    def concantTailRec(remaining: RList[S], acc: RList[S]): RList[S] =
+      if (remaining.isEmpty) acc
+      else concantTailRec(remaining.tail, remaining.head :: acc)
+    concantTailRec(this.reverse, anotherList)
 
 @main def firstMain =
   val nList = 1 :: 2 :: 3 :: RNill
