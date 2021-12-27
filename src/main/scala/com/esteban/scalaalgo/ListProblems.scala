@@ -19,6 +19,7 @@ sealed abstract class RList[+T]:
   // run -length - enconding
   def rle: RList[(T, Int)]
   def duplicateElements(k: Int): RList[T]
+  def rotate(x: Int): RList[T]
 
 object RList:
   def from[T](iterable: Iterable[T]): RList[T] =
@@ -41,7 +42,8 @@ case object RNill extends RList[Nothing]:
   override def filter(f: Nothing => Boolean): RList[Nothing] = RNill
   override def flatMap[S](f: Nothing => RList[S]): RList[S] = RNill
   override def rle: RList[(Nothing, Int)] = throw new NoSuchElementException
-  override def duplicateElements(k: Int): RList[Nothing] = ???
+  override def duplicateElements(k: Int): RList[Nothing] = RNill
+  override def rotate(x: Int): RList[Nothing] = RNill
 
 case class ::[+T](override val head: T, override val tail: RList[T]) extends RList[T]:
   override val isEmpty = false
@@ -129,6 +131,8 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       if (remaining.isEmpty) acc.reverse
       else duplicateTailRec(duplicateEach(remaining.head) ++ acc, remaining.tail)
     duplicateTailRec(RNill, this)
+  override def rotate(x: Int): RList[T] =
+    ???
 
 @main def firstMain =
   println("-" * 50)
