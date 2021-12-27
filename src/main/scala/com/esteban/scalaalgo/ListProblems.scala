@@ -16,6 +16,8 @@ sealed abstract class RList[+T]:
   def map[S](f: T => S): RList[S]
   def filter(f: T => Boolean): RList[T]
   def flatMap[S](f: T => RList[S]): RList[S]
+  // run -length - enconding
+  def rle: RList[(T, Int)]
 
 object RList:
   def from[T](iterable: Iterable[T]): RList[T] =
@@ -37,6 +39,7 @@ case object RNill extends RList[Nothing]:
   def map[S](f: Nothing => S): RList[S] = RNill
   def filter(f: Nothing => Boolean): RList[Nothing] = RNill
   def flatMap[S](f: Nothing => RList[S]): RList[S] = RNill
+  def rle: RList[(Nothing, Int)] = throw new NoSuchElementException
 
 case class ::[+T](override val head: T, override val tail: RList[T]) extends RList[T]:
   override val isEmpty = false
@@ -94,24 +97,38 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       if (remaining.isEmpty) acc.reverse
       else filterTailRec(if (f(remaining.head)) remaining.head :: acc else acc, remaining.tail)
     filterTailRec(RNill, this)
-
   def flatMap[S](f: T => RList[S]): RList[S] =
     def flatMapTailRec(acc: RList[S], remaining: RList[T]): RList[S] =
       if (remaining.isEmpty) acc.reverse
       else flatMapTailRec(f(remaining.head).reverse ++ acc, remaining.tail)
     flatMapTailRec(RNill, this)
+  def rle: RList[(T, Int)] =
+    @tailrec
+    def rleTail(
+        acc: RList[(T, Int)],
+        currentTuple: (T, Int),
+        remaining: RList[T],
+      ): RList[(T, Int)] =
+      if (remaining.isEmpty && currentTuple._2 == 0) acc
+      else if (remaining.isEmpty) currentTuple :: acc
+      else if (remaining.head == currentTuple._1)
+        rleTail(acc, currentTuple.copy(_2 = currentTuple._2 + 1), remaining.tail)
+      else rleTail(currentTuple :: acc, (remaining.head, 1), remaining.tail)
+    rleTail(RNill, (head, 1), tail).reverse
 
 @main def firstMain =
   val nList = 1 :: 2 :: 3 :: RNill
+  val nList2 = 1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill
   println("-" * 50)
-  println(nList(2))
-  println(nList.length)
-  println(nList.reverse)
-  println(RList.from(1 to 10).reverse)
-  println(RList.from(1 to 10).remove(6))
-  println(RList.from(1 to 10).map(x => x * 2))
-  println(RList.from(1 to 10).filter(x => x == 2))
-  println(RList.from(1 to 10).flatMap(x => x :: (2 * x) :: RNill))
+  // println(nList(2))
+  // println(nList.length)
+  // println(nList.reverse)
+  // println(RList.from(1 to 10).reverse)
+  // println(RList.from(1 to 10).remove(6))
+  // println(RList.from(1 to 10).map(x => x * 2))
+  // println(RList.from(1 to 10).filter(_ == 2))
+  // println(RList.from(1 to 10).flatMap(x => x :: (2 * x) :: RNill))
+  println(nList2.rle)
   println("-" * 50)
 
 object ListProblems
