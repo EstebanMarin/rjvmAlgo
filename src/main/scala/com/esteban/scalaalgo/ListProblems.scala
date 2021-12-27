@@ -111,7 +111,7 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
   println(RList.from(1 to 10).remove(6))
   println(RList.from(1 to 10).map(x => x * 2))
   println(RList.from(1 to 10).filter(x => x == 2))
-  // println(RList.from(1 to 10).flatMap[String](x => s"$x")
+  println(RList.from(1 to 10).flatMap(x => x :: (2 * x) :: RNill))
   println("-" * 50)
 
 object ListProblems
