@@ -132,7 +132,15 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       else duplicateTailRec(duplicateEach(remaining.head) ++ acc, remaining.tail)
     duplicateTailRec(RNill, this)
   override def rotate(x: Int): RList[T] =
-    ???
+    @tailrec
+    def rotateTailRec(
+        acc: RList[T],
+        iteration: Int,
+        remaining: RList[T],
+      ): RList[T] =
+      if (iteration == x) remaining.tail ++ acc.reverse
+      else rotateTailRec(remaining.head :: acc, iteration + 1, remaining.tail)
+    rotateTailRec(RNill, 0, this)
 
 @main def firstMain =
   println("-" * 50)
@@ -145,7 +153,8 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
   // println(RList.from(1 to 10).filter(_ == 2))
   // println(RList.from(1 to 10).flatMap(x => x :: (2 * x) :: RNill))
   // println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).rle)
-  println((1 :: 2 :: 3 :: 0 :: RNill).duplicateElements(3))
+  // println((1 :: 2 :: 3 :: 0 :: RNill).duplicateElements(3))
+  println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).rotate(3))
   println("-" * 50)
 
 object ListProblems
