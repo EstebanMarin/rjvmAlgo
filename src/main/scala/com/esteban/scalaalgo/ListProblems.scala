@@ -18,6 +18,7 @@ sealed abstract class RList[+T]:
   def flatMap[S](f: T => RList[S]): RList[S]
   // run -length - enconding
   def rle: RList[(T, Int)]
+  def duplicateElements(k: Int): RList[T]
 
 object RList:
   def from[T](iterable: Iterable[T]): RList[T] =
@@ -27,19 +28,20 @@ object RList:
     convertToRList(iterable, RNill).reverse
 
 case object RNill extends RList[Nothing]:
-  def head = throw new NoSuchElementException
-  def tail = throw new NoSuchElementException
+  override def head = throw new NoSuchElementException
+  override def tail = throw new NoSuchElementException
   val isEmpty = true
   override def toString: String = "[]"
   override def apply(index: Int): Nothing = throw new NoSuchElementException
   override def length = 0
   override def reverse = throw new NoSuchElementException
-  def ++[S >: Nothing](anotherList: RList[S]): RList[S] = anotherList
-  def remove(k: Int): RList[Nothing] = throw new NoSuchElementException
-  def map[S](f: Nothing => S): RList[S] = RNill
-  def filter(f: Nothing => Boolean): RList[Nothing] = RNill
-  def flatMap[S](f: Nothing => RList[S]): RList[S] = RNill
-  def rle: RList[(Nothing, Int)] = throw new NoSuchElementException
+  override def ++[S >: Nothing](anotherList: RList[S]): RList[S] = anotherList
+  override def remove(k: Int): RList[Nothing] = throw new NoSuchElementException
+  override def map[S](f: Nothing => S): RList[S] = RNill
+  override def filter(f: Nothing => Boolean): RList[Nothing] = RNill
+  override def flatMap[S](f: Nothing => RList[S]): RList[S] = RNill
+  override def rle: RList[(Nothing, Int)] = throw new NoSuchElementException
+  override def duplicateElements(k: Int): RList[Nothing] = ???
 
 case class ::[+T](override val head: T, override val tail: RList[T]) extends RList[T]:
   override val isEmpty = false
@@ -69,13 +71,13 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       if (remaining.isEmpty) result
       else reverseRec(remaining.head :: result, remaining.tail)
     reverseRec(head :: RNill, tail)
-  def ++[S >: T](anotherList: RList[S]): RList[S] =
+  override def ++[S >: T](anotherList: RList[S]): RList[S] =
     @tailrec
     def concantTailRec(remaining: RList[S], acc: RList[S]): RList[S] =
       if (remaining.isEmpty) acc
       else concantTailRec(remaining.tail, remaining.head :: acc)
     concantTailRec(this.reverse, anotherList)
-  def remove(k: Int): RList[T] =
+  override def remove(k: Int): RList[T] =
     @tailrec
     def removeTailRec(
         remaining: RList[T],
@@ -85,24 +87,24 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       if (iteration == k) acc.tail.reverse ++ (remaining.head :: remaining.tail)
       else removeTailRec(remaining.tail, remaining.head :: acc, iteration + 1)
     removeTailRec(tail, head :: RNill, 0)
-  def map[S](f: T => S): RList[S] =
+  override def map[S](f: T => S): RList[S] =
     @tailrec
     def mapTailRec(acc: RList[S], remaining: RList[T]): RList[S] =
       if (remaining.isEmpty) acc.reverse
       else mapTailRec(f(remaining.head) :: acc, remaining.tail)
     mapTailRec(RNill, this)
-  def filter(f: T => Boolean): RList[T] =
+  override def filter(f: T => Boolean): RList[T] =
     @tailrec
     def filterTailRec(acc: RList[T], remaining: RList[T]): RList[T] =
       if (remaining.isEmpty) acc.reverse
       else filterTailRec(if (f(remaining.head)) remaining.head :: acc else acc, remaining.tail)
     filterTailRec(RNill, this)
-  def flatMap[S](f: T => RList[S]): RList[S] =
+  override def flatMap[S](f: T => RList[S]): RList[S] =
     def flatMapTailRec(acc: RList[S], remaining: RList[T]): RList[S] =
       if (remaining.isEmpty) acc.reverse
       else flatMapTailRec(f(remaining.head).reverse ++ acc, remaining.tail)
     flatMapTailRec(RNill, this)
-  def rle: RList[(T, Int)] =
+  override def rle: RList[(T, Int)] =
     @tailrec
     def rleTail(
         acc: RList[(T, Int)],
@@ -115,10 +117,18 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
         rleTail(acc, currentTuple.copy(_2 = currentTuple._2 + 1), remaining.tail)
       else rleTail(currentTuple :: acc, (remaining.head, 1), remaining.tail)
     rleTail(RNill, (head, 1), tail).reverse
+  override def duplicateElements(k: Int): RList[T] =
+    def duplicateEach(head: T): RList[T] =
+      def duplicateEachTailRec(iteration: Int, acc: RList[T]): RList[T] =
+        if (iteration == k) acc
+        else duplicateEachTailRec(iteration + 1, head :: acc)
+      duplicateEachTailRec(0, RNill)
+    def duplicateTailRec(acc: RList[T], remaining: RList[T]): RList[T] =
+      if (remaining.isEmpty) acc.reverse
+      else duplicateTailRec(duplicateEach(remaining.head) ++ acc, remaining.tail)
+    duplicateTailRec(RNill, this)
 
 @main def firstMain =
-  val nList = 1 :: 2 :: 3 :: RNill
-  val nList2 = 1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill
   println("-" * 50)
   // println(nList(2))
   // println(nList.length)
@@ -128,7 +138,8 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
   // println(RList.from(1 to 10).map(x => x * 2))
   // println(RList.from(1 to 10).filter(_ == 2))
   // println(RList.from(1 to 10).flatMap(x => x :: (2 * x) :: RNill))
-  println(nList2.rle)
+  // println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).rle)
+  println((1 :: 2 :: 3 :: 0 :: RNill).duplicateElements(3))
   println("-" * 50)
 
 object ListProblems
