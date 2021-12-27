@@ -89,19 +89,17 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       else mapTailRec(f(remaining.head) :: acc, remaining.tail)
     mapTailRec(f(head) :: RNill, tail).reverse
   def filter(f: T => Boolean): RList[T] =
-    def accumutateIf(
-        head: T,
-        acc: RList[T],
-      ): RList[T] =
-      if (f(head)) head :: acc else acc
     @tailrec
     def filterTailRec(acc: RList[T], remaining: RList[T]): RList[T] =
       if (remaining.isEmpty) acc
-      else filterTailRec(accumutateIf(remaining.head, acc), remaining.tail)
+      else filterTailRec(if (f(remaining.head)) remaining.head :: acc else acc, remaining.tail)
     filterTailRec(RNill, this).reverse
 
   def flatMap[S](f: T => RList[S]): RList[S] =
-    ???
+    def flatMapTailRec(acc: RList[S], remaining: RList[T]): RList[S] =
+      if (remaining.isEmpty) acc
+      else flatMapTailRec(f(remaining.head) ++ acc, remaining.tail)
+    flatMapTailRec(RNill, this)
 
 @main def firstMain =
   val nList = 1 :: 2 :: 3 :: RNill
@@ -112,7 +110,8 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
   // println(RList.from(1 to 10).reverse)
   // println(RList.from(1 to 10).remove(6))
   // println(RList.from(1 to 10).map(x => x * 2))
-  println(RList.from(1 to 10).filter(x => x == 2))
+  // println(RList.from(1 to 10).filter(x => x == 2))
+  // println(RList.from(1 to 10).flatMap[String](x => s"$x")
   println("-" * 50)
 
 object ListProblems
