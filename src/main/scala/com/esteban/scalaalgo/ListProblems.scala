@@ -85,32 +85,32 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
   def map[S](f: T => S): RList[S] =
     @tailrec
     def mapTailRec(acc: RList[S], remaining: RList[T]): RList[S] =
-      if (remaining.isEmpty) acc
+      if (remaining.isEmpty) acc.reverse
       else mapTailRec(f(remaining.head) :: acc, remaining.tail)
-    mapTailRec(f(head) :: RNill, tail).reverse
+    mapTailRec(RNill, this)
   def filter(f: T => Boolean): RList[T] =
     @tailrec
     def filterTailRec(acc: RList[T], remaining: RList[T]): RList[T] =
-      if (remaining.isEmpty) acc
+      if (remaining.isEmpty) acc.reverse
       else filterTailRec(if (f(remaining.head)) remaining.head :: acc else acc, remaining.tail)
-    filterTailRec(RNill, this).reverse
+    filterTailRec(RNill, this)
 
   def flatMap[S](f: T => RList[S]): RList[S] =
     def flatMapTailRec(acc: RList[S], remaining: RList[T]): RList[S] =
-      if (remaining.isEmpty) acc
-      else flatMapTailRec(f(remaining.head) ++ acc, remaining.tail)
+      if (remaining.isEmpty) acc.reverse
+      else flatMapTailRec(f(remaining.head).reverse ++ acc, remaining.tail)
     flatMapTailRec(RNill, this)
 
 @main def firstMain =
   val nList = 1 :: 2 :: 3 :: RNill
   println("-" * 50)
-//   println(nList(2))
-//   println(nList.length)
-  // println(nList.reverse)
-  // println(RList.from(1 to 10).reverse)
-  // println(RList.from(1 to 10).remove(6))
-  // println(RList.from(1 to 10).map(x => x * 2))
-  // println(RList.from(1 to 10).filter(x => x == 2))
+  println(nList(2))
+  println(nList.length)
+  println(nList.reverse)
+  println(RList.from(1 to 10).reverse)
+  println(RList.from(1 to 10).remove(6))
+  println(RList.from(1 to 10).map(x => x * 2))
+  println(RList.from(1 to 10).filter(x => x == 2))
   // println(RList.from(1 to 10).flatMap[String](x => s"$x")
   println("-" * 50)
 
