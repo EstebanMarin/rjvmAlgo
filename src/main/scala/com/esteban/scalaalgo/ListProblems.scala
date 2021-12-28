@@ -22,6 +22,14 @@ sealed abstract class RList[+T]:
   def duplicateElements(k: Int): RList[T]
   def rotate(x: Int): RList[T]
   def sample(x: Int): RList[T]
+  def sorted[S >: T](ordering: Ordering[S]): RList[S]
+
+/*
+  [3,]
+ */
+// def sorted[S >: T](ordering: Ordering[S]): RList[S]
+
+// hard
 
 object RList:
   def from[T](iterable: Iterable[T]): RList[T] =
@@ -47,6 +55,7 @@ case object RNill extends RList[Nothing]:
   override def duplicateElements(k: Int): RList[Nothing] = RNill
   override def rotate(x: Int): RList[Nothing] = RNill
   override def sample(x: Int): RList[Nothing] = RNill
+  def sorted[S >: Nothing](ordering: Ordering[S]): RList[S] = RNill
 
 case class ::[+T](override val head: T, override val tail: RList[T]) extends RList[T]:
   override val isEmpty = false
@@ -153,6 +162,18 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       if (iteration == x) acc
       else sampleTailRec(this(random.nextInt(this.length)) :: acc, iteration + 1)
     sampleTailRec(RNill, 0)
+  def sorted[S >: T](ordering: Ordering[S]): RList[S] =
+    def insertSort(
+        element: T,
+        before: RList[S],
+        after: RList[S],
+      ): RList[S] =
+      if (after.isEmpty || ordering.lteq(element, after.head)) before.reverse ++ (element :: after)
+      else insertSort(element, after.head :: before, after.tail)
+    def insertSortTailRec(remaining: RList[T], acc: RList[S]): RList[S] =
+      if (remaining.isEmpty) acc
+      else insertSortTailRec(remaining.tail, insertSort(remaining.head, RNill, acc))
+    insertSortTailRec(this, RNill)
 
 @main def firstMain =
   println("-" * 50)
@@ -167,7 +188,8 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
   // println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).rle)
   // println((1 :: 2 :: 3 :: 0 :: RNill).duplicateElements(3))
   // println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).rotate(3))
-  println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).sample(11))
-  println("-" * 50)
+  // println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).sample(11))
+  // println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).sample(11))
+  println((3 :: 2 :: 4 :: 1 :: RNill).sorted(Ordering.fromLessThan[Int](_ < _)))
 
 object ListProblems
