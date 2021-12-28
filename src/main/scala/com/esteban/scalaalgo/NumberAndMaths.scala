@@ -5,7 +5,15 @@ import scala.annotation.tailrec
 object NumMath:
   def isPrime(n: Int): Boolean =
     /*
-    isPrime(3) = 2 > 9 ? = 3
+    isPrime(11) = true
+    ip(2) = 11 % 2 != 0 && ip(3)
+    ips(3) = 11 % 3 != 0 && ip(4)
+    ips(4) = true
+
+    isPrime(15) = ip(2)
+    ip(2) = 15 % 2 != 0 && ip(3)
+    ips(3) = 15 % 3 != 0  => false
+
      */
     @tailrec
     def isPrimeTailRec(current: Int): Boolean =
