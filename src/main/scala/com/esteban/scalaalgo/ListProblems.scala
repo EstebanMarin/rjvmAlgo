@@ -151,7 +151,7 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
         iteration: Int,
       ): RList[T] =
       if (iteration == x) acc
-      else sampleTailRec(this.apply(random.nextInt(this.length)) :: acc, iteration + 1)
+      else sampleTailRec(this(random.nextInt(this.length)) :: acc, iteration + 1)
     sampleTailRec(RNill, 0)
 
 @main def firstMain =
