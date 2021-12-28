@@ -2,6 +2,7 @@ package com.esteban.scalaalgo
 
 import scala.annotation.tailrec
 import scala.collection.Iterable
+import scala.util.Random
 
 sealed abstract class RList[+T]:
   def head: T
@@ -20,6 +21,7 @@ sealed abstract class RList[+T]:
   def rle: RList[(T, Int)]
   def duplicateElements(k: Int): RList[T]
   def rotate(x: Int): RList[T]
+  def sample(x: Int): RList[T]
 
 object RList:
   def from[T](iterable: Iterable[T]): RList[T] =
@@ -44,6 +46,7 @@ case object RNill extends RList[Nothing]:
   override def rle: RList[(Nothing, Int)] = throw new NoSuchElementException
   override def duplicateElements(k: Int): RList[Nothing] = RNill
   override def rotate(x: Int): RList[Nothing] = RNill
+  override def sample(x: Int): RList[Nothing] = RNill
 
 case class ::[+T](override val head: T, override val tail: RList[T]) extends RList[T]:
   override val isEmpty = false
@@ -141,6 +144,15 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       if (iteration == x) remaining.tail ++ acc.reverse
       else rotateTailRec(remaining.head :: acc, iteration + 1, remaining.tail)
     rotateTailRec(RNill, 0, this)
+  def sample(x: Int): RList[T] =
+    def random = new Random
+    def sampleTailRec(
+        acc: RList[T],
+        iteration: Int,
+      ): RList[T] =
+      if (iteration == x) acc
+      else sampleTailRec(this.apply(random.nextInt(this.length)) :: acc, iteration + 1)
+    sampleTailRec(RNill, 0)
 
 @main def firstMain =
   println("-" * 50)
@@ -154,7 +166,8 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
   // println(RList.from(1 to 10).flatMap(x => x :: (2 * x) :: RNill))
   // println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).rle)
   // println((1 :: 2 :: 3 :: 0 :: RNill).duplicateElements(3))
-  println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).rotate(3))
+  // println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).rotate(3))
+  println((1 :: 1 :: 1 :: 2 :: 2 :: 3 :: 3 :: 3 :: 4 :: 5 :: RNill).sample(11))
   println("-" * 50)
 
 object ListProblems
