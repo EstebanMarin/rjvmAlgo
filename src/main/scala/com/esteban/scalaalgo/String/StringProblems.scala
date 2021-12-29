@@ -16,7 +16,7 @@ object StringProblems:
   def anagram(sa: String, sb: String): Boolean =
     sa.sorted == sb.sorted
 
-@main def stringMain =
+def stringMain =
   println("-" * 50)
   // println(StringProblems.countCharacters("Scala"))
   // println(StringProblems.countCharacters("Esteban"))

@@ -13,5 +13,6 @@ object AproximatePi:
       }
       .count(distance => distance < 1)
     nPointsInside * 4.0 / n
-  @main def pi =
+
+  def pi =
     println(aproximatePi(1000000))

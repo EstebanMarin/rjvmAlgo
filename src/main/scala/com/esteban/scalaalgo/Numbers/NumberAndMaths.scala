@@ -52,7 +52,7 @@ object NumMath:
       else decomposeTailRec(current + 1, acc)
     decomposeTailRec(1, Nil)
 
-@main def numbers =
+def numbers =
   import NumberOps.*
   println("-" * 50)
   println(NumMath.isPrime(2))

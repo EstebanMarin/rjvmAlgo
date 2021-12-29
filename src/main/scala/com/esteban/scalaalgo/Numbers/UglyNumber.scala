@@ -18,7 +18,7 @@ object UglyNumber:
       else uglyTailRec(interation + 1, if (number % interation == 0) interation :: acc else acc)
     if (number == 1) true else uglyTailRec(2, Nil)
 
-@main def uglyMain =
+def uglyMain =
   import UglyNum.*
 
   println(UglyNumber.uglyNumber(6))

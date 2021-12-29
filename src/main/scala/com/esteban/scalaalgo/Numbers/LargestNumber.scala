@@ -31,7 +31,7 @@ object LargestNumber:
     if (numbers.isEmpty || largest.charAt(0) == '0') "0"
     else largest
 
-@main def largestMain =
+def largestMain =
   import NumOps.*
   val test = List(3, 30, 5, 9, 34, 40, 4, 41, 4211, 4311)
   println(LargestNumber.largestNumber(test))

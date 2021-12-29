@@ -12,7 +12,7 @@ object Parenthesis:
       else hasValidTailRec(string.tail, logic(string.head, acc))
     hasValidTailRec(stringList, Set())
 
-@main def paraMan =
+def paraMan =
   println("-" * 50)
   println(Parenthesis.hasValidP("()"))
   println(Parenthesis.hasValidP("(("))

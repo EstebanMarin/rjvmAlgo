@@ -22,7 +22,7 @@ object StringMethods:
           parseTailRec(remaining.tail, if (remaining.head.isDigit) remaining.head :: acc else acc)
       parseTailRec(list, List())
 
-@main def parseMain =
+def parseMain =
   import StringMethods.*
 
   println("-" * 50)

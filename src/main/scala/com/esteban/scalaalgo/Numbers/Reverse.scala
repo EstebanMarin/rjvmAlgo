@@ -9,7 +9,7 @@ object Reverse:
     def reverseToInt: Int =
       number.toString.reverse.toInt
 
-@main def reverseMain =
+def reverseMain =
   import Reverse.*
   println(14.reverseToInt)
   println(4.reverse)
