@@ -175,7 +175,7 @@ case class ::[+T](override val head: T, override val tail: RList[T]) extends RLi
       else insertSortTailRec(remaining.tail, insertSort(remaining.head, RNill, acc))
     insertSortTailRec(this, RNill)
 
-@main def firstMain =
+def firstMain =
   println("-" * 50)
 // println(nList(2))
 // println(nList.length)
