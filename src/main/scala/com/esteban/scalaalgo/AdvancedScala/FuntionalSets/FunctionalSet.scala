@@ -1,17 +1,33 @@
 package com.esteban.scalaalgo.AdvancedScala.FuntionalSets
 
-import javax.swing.text.html.FormSubmitEvent
 import scala.annotation.tailrec
 
 abstract class FSet[A] extends (A => Boolean):
   def contains(elem: A): Boolean
   def apply(elem: A): Boolean = contains(elem)
   infix def +(elem: A): FSet[A]
-  infix def ++(elem: FSet[A]): FSet[A]
+  infix def ++(another: FSet[A]): FSet[A]
   def map[B](f: A => B): FSet[B]
   def flatMap[B](f: A => FSet[B]): FSet[B]
   def filter(predicate: A => Boolean): FSet[A]
   def foreach(f: A => Unit): Unit
+  infix def -(elem: A): FSet[A]
+  infix def --(another: FSet[A]): FSet[A]
+  infix def &(another: FSet[A]): FSet[A] // filtering
+  def unary_! : FSet[A]
+
+case class AllInclusiveSet[A]() extends FSet[A]:
+  override def contains(elem: A): Boolean = true
+  infix override def +(elem: A): FSet[A] = this
+  infix override def ++(elem: FSet[A]): FSet[A] = this
+  override def map[B](f: A => B): FSet[B] = ???
+  override def flatMap[B](f: A => FSet[B]): FSet[B] = ???
+  override def filter(predicate: A => Boolean): FSet[A] = this
+  override def foreach(f: A => Unit): Unit = ()
+  infix override def -(elem: A): FSet[A] = this
+  infix override def --(another: FSet[A]): FSet[A] = this
+  infix override def &(another: FSet[A]): FSet[A] = this
+  def unary_! : FSet[A] = new AllInclusiveSet()
 
 case class Empty[A]() extends FSet[A]:
   override def contains(elem: A): Boolean = false
@@ -21,6 +37,10 @@ case class Empty[A]() extends FSet[A]:
   override def flatMap[B](f: A => FSet[B]): FSet[B] = Empty()
   override def filter(predicate: A => Boolean): FSet[A] = this
   override def foreach(f: A => Unit): Unit = ()
+  infix override def -(elem: A): FSet[A] = this
+  infix override def --(another: FSet[A]): FSet[A] = this
+  infix override def &(another: FSet[A]): FSet[A] = this
+  def unary_! : FSet[A] = new AllInclusiveSet()
 
 case class Cons[A](head: A, tail: FSet[A]) extends FSet[A]:
   // notice no order is preserved!!!!!
@@ -37,6 +57,12 @@ case class Cons[A](head: A, tail: FSet[A]) extends FSet[A]:
   override def foreach(f: A => Unit): Unit =
     f(head)
     tail.foreach(f)
+  infix override def -(elem: A): FSet[A] =
+    if (head == elem) tail
+    else tail - elem + head
+  infix override def --(another: FSet[A]): FSet[A] = filter(!another)
+  infix override def &(another: FSet[A]): FSet[A] = filter(another)
+  def unary_! : FSet[A] = ???
 
 object FSet:
   def apply[A](values: A*): FSet[A] =
@@ -50,5 +76,13 @@ object FunctionalSet:
   @main def partialMain =
     println("-" * 50)
     val first5 = FSet(1, 2, 3, 4, 5)
+    val someNumbers = FSet(4, 5, 6, 7, 8, 9)
     println(first5.contains(2))
+    // set as a function to filter
+    val aSet = Set(1, 2, 3, 4)
+    val aList = (1 to 10).toList.filter(aSet)
+    println(aList)
+    println((first5 - 3).contains(3))
+    println((first5 -- someNumbers).contains(4))
+    println((first5 & someNumbers).contains(4))
     println("-" * 50)
