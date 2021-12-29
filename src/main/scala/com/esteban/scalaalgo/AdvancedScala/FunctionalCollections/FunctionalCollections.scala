@@ -20,6 +20,6 @@ object FunctionalCollections:
 
 //   val estebanNumber = aPhoneBook("Esteban") // throws error
 
-@main def collectionsMain =
+def collectionsMain =
   println("-" * 50)
   println("-" * 50)
