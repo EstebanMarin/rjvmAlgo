@@ -95,7 +95,7 @@ object Monadas:
 
   //   val associativity = aOption.flatMap(f).flatMap(g) == aOption.flatMap(x => f(x).flatMap(g))
 
-  @main def monadsMain =
+  def monadsMain =
     println("-" * 50)
     // println(ListStory.leftIdentity)
     // println(ListStory.rightIdentity)
