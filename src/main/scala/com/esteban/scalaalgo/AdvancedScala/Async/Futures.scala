@@ -35,6 +35,8 @@ object Futures:
 
   object SocialNetwork:
     // database
+    given executionContext: ExecutionContext =
+      ExecutionContext.fromExecutorService(executors)
     val names = Map(
       "1" -> "Esteban",
       "2" -> "Camilo",
@@ -62,6 +64,7 @@ object Futures:
       for
         profile <- fetchProfile(accountId)
         bestFriend <- fetchBestFriend(profile)
+        _ <- Future(println(s"for ${profile.name} ${bestFriend.name}"))
       yield profile.sendMessage(bestFriend, message)
 
     val recoverFuture: Future[Profile] = fetchProfile("none").recover {
