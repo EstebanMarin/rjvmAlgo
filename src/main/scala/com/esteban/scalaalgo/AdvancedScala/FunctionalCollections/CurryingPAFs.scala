@@ -36,7 +36,7 @@ object CurryingPAFs:
   val curriedFormater: String => Double => String = fmt => number => fmt.format(number)
   val someDecimals = List(Math.PI, Math.E, 1, 9.8, 1.3e-12)
 
-  @main def curryingMain =
+  def curryingMain =
     println(insertName("Esteban"))
     println(fillTheBlanks("He is trully => ", " => Brilliant"))
     println(someDecimals.map(curriedFormater("%4.2f")))
