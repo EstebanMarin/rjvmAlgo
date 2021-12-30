@@ -51,6 +51,7 @@ object Monadas:
       // this is not garantieed in the signature, is garanteed by implementation
       val associativity = aOption.flatMap(f).flatMap(g) == aOption.flatMap(x => f(x).flatMap(g))
 
+  // Any computation that might perform side effects
   case class PossiblyMonad[A](unsafeRun: () => A):
     def map[B](f: A => B): PossiblyMonad[B] =
       PossiblyMonad(() => f(unsafeRun()))
@@ -62,11 +63,31 @@ object Monadas:
     def apply[A](value: => A): PossiblyMonad[A] =
       new PossiblyMonad(() => value)
 
-  // object Possibly:
-  //   val aPossibly = PossiblyMonad(42)
-  //   val f = (x: Int) => PossiblyMonad(x + 1)
-  //   val g = (x: Int) => PossiblyMonad(x * 2)
-  //   val pure = (x: Int) => PossiblyMonad(x)
+  object Possibly:
+    val aPossibly = PossiblyMonad(42)
+    val f = (x: Int) => PossiblyMonad(x + 1)
+    val g = (x: Int) => PossiblyMonad(x * 2)
+    val pure = (x: Int) => PossiblyMonad(x)
+
+    def possiblyMonadExample(): Unit =
+      val aPossibleMonad: PossiblyMonad[Int] = PossiblyMonad {
+        println("printing first possible monad")
+        42
+      }
+
+      val aPossibleMonad2: PossiblyMonad[String] = PossiblyMonad {
+        println("printing first possible monad")
+        "Scala"
+      }
+
+      val return1 = aPossibleMonad.unsafeRun()
+      //   println(return1)
+      val program =
+        for // computation described not EXECUTED
+          x <- aPossibleMonad
+          y <- aPossibleMonad2
+        yield s"$x - $y"
+      println(program.unsafeRun())
 
   //   val leftIdentity = pure(42).flatMap(f) == f(42)
   //   val rightIdentity = aPossibly.flatMap(pure) == aPossibly
@@ -81,4 +102,5 @@ object Monadas:
     // println(ListStory.associativity)
     // println(OptionStory.another.get)
     // println(OptionStory.flattedOption.get)
+    println(Possibly.possiblyMonadExample())
     println("-" * 50)
