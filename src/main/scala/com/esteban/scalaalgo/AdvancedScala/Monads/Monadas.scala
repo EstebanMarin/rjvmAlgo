@@ -80,8 +80,8 @@ object Monadas:
         "Scala"
       }
 
-      val return1 = aPossibleMonad.unsafeRun()
-      //   println(return1)
+      //   val return1 = aPossibleMonad.unsafeRun()
+      //   //   println(return1)
       val program =
         for // computation described not EXECUTED
           x <- aPossibleMonad
