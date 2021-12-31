@@ -93,11 +93,20 @@ object Futures:
 
       def first[A](f1: Future[A], f2: Future[A]): Future[A] =
         val promise = Promise[A]()
-        f1.onComplete(result => promise.complete(result))
-        f2.onComplete(result => promise.complete(result))
+        f1.onComplete(result => promise.tryComplete(result))
+        f2.onComplete(result => promise.tryComplete(result))
         promise.future
 
-      def last[A](f1: Future[A], f2: Future[A]): Future[A] = ???
+      def last[A](f1: Future[A], f2: Future[A]): Future[A] =
+        val bothPromise = Promise[A]()
+        val lastPromise = Promise[A]()
+        def checkAndComplete(result: Try[A]): Unit =
+          if (!bothPromise.tryComplete(result))
+            lastPromise.complete(result)
+        f1.onComplete(checkAndComplete)
+        f2.onComplete(checkAndComplete)
+        lastPromise.future
+
       def retryUntill[A](action: () => Future[A], predicate: A => Boolean): Future[A] = ???
 
   @main def futuresMain =
