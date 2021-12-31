@@ -79,6 +79,26 @@ object Futures:
     // promise
     val promise: Promise[Int] = Promise[Int]()
     val futureInside: Future[Int] = promise.future
+    // val testPromise = promise.
+
+    object Exercises:
+      // full immvediatelly a Future with a value
+      val value: Future[Int] = Future.successful(42)
+
+      def inSequence[A, B](first: Future[A], second: Future[B]): Future[B] =
+        for
+          _ <- first
+          s <- second
+        yield s
+
+      def first[A](f1: Future[A], f2: Future[A]): Future[A] =
+        val promise = Promise[A]()
+        f1.onComplete(result => promise.complete(result))
+        f2.onComplete(result => promise.complete(result))
+        promise.future
+
+      def last[A](f1: Future[A], f2: Future[A]): Future[A] = ???
+      def retryUntill[A](action: () => Future[A], predicate: A => Boolean): Future[A] = ???
 
   @main def futuresMain =
     println("-" * 50)
