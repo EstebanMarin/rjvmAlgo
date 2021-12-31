@@ -9,20 +9,21 @@ import java.util.concurrent.ExecutorService
 import scala.util.Try
 import java.util.Random
 import com.esteban.scalaalgo.AdvancedScala.Async.Futures.Profile
+import com.esteban.scalaalgo.AdvancedScala.Async.Futures.SocialNetwork.Exercises
 
 object Futures:
-  def meainingofLife(): Int =
-    Thread.sleep(1000)
-    42
   val executors = Executors.newFixedThreadPool(4)
   given executionContext: ExecutionContext =
     ExecutionContext.fromExecutorService(executors)
+  def meainingofLife(): Int =
+    Thread.sleep(1000)
+    42
 
   val aFuture: Future[Int] = Future(meainingofLife())
   val futureResult: Option[Try[Int]] = aFuture.value
 
   aFuture.onComplete {
-    case Success(value) => println(s"$value")
+    case Success(value) => println(s"onComplete method: $value")
     case Failure(ex) => println(s"$ex")
   }
 
@@ -107,14 +108,32 @@ object Futures:
         f2.onComplete(checkAndComplete)
         lastPromise.future
 
-      def retryUntill[A](action: () => Future[A], predicate: A => Boolean): Future[A] = ???
+      def retryUntill[A](action: () => Future[A], predicate: A => Boolean): Future[A] =
+        action().filter(predicate).recoverWith {
+          case _ => retryUntill(action, predicate)
+        }
 
   @main def futuresMain =
     println("-" * 50)
-    println(futureResult)
+    // println(futureResult)
+    // Thread.sleep(2000)
+    // executors.shutdown()
+    // println(SocialNetwork.sendMessageFriend("1", "Hello from here"))
+    lazy val fast = Future {
+      Thread.sleep(100)
+      1
+    }
+
+    lazy val slow = Future {
+      Thread.sleep(200)
+      2
+    }
+    Exercises.first(fast, slow).foreach(result => println(s"FIRST: $result"))
+    Exercises.last(fast, slow).foreach(result => println(s"LAST: $result"))
+    Exercises.inSequence(fast, slow).onComplete { result =>
+      println(s"resolving a promise: Fast: ${result.get}")
+    }
     Thread.sleep(2000)
     executors.shutdown()
-    println(SocialNetwork.sendMessageFriend("1", "Hello from here"))
-    println("-" * 50)
 
 end Futures
