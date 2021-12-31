@@ -2,7 +2,7 @@ package com.esteban.scalaalgo.AdvancedScala.Async
 
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
-import scala.concurrent.Future
+import scala.concurrent.{ Future, Promise }
 import scala.concurrent.ExecutionContext
 import scala.util.{ Failure, Success }
 import java.util.concurrent.ExecutorService
@@ -76,6 +76,9 @@ object Futures:
     }
 
     val caseFallback = fetchProfile("None").fallbackTo(fetchProfile("Dummy"))
+    // promise
+    val promise: Promise[Int] = Promise[Int]()
+    val futureInside: Future[Int] = promise.future
 
   @main def futuresMain =
     println("-" * 50)
