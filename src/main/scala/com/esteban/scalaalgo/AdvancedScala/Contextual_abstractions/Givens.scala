@@ -52,8 +52,18 @@ object Givens:
     override def compare(x: List[A], y: List[A]) =
       ord.compare(combineAll(x), combineAll(y))
 
+  // Ordering Option[A]
+  // 1 - create a given for ordering Option[A] if you can order A
+  given optinoOrdering[A](using ord: Ordering[A]): Ordering[Option[A]] with
+    override def compare(x: Option[A], y: Option[A]) = (x, y) match
+      case (None, None) => 0
+      case (None, _) => -1
+      case (_, None) => -1
+      case (Some(a), Some(b)) => ord.compare(a, b)
+
   @main def run =
     println("-" * 50)
     // println(combineAllPeople)
     println(orderNested)
+    println(List(Option(1), Option.empty[Int], Option(3), Option(-1000)).sorted)
     println("-" * 50)
