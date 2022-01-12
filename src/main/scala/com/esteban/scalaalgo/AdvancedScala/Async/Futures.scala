@@ -113,7 +113,7 @@ object Futures:
           case _ => retryUntill(action, predicate)
         }
 
-  @main def futuresMain =
+  def futuresMain =
     println("-" * 50)
     // println(futureResult)
     // Thread.sleep(2000)
