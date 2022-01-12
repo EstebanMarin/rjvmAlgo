@@ -30,7 +30,30 @@ object Givens:
 
   val combineAllPeople = combineAll(people)
 
+  // context bounds
+  def combineInGroups[A](list: List[A])(using combinator: Combinator[A]): List[A] =
+    list.grouped(3).map(combineAll).toList
+
+  def combineInGroups_V2[A: Combinator](list: List[A]): List[A] =
+    list.grouped(3).map(combineAll).toList
+
+  given listOrdering(using intOrdering: Ordering[Int]): Ordering[List[Int]] with
+    override def compare(x: List[Int], y: List[Int]) =
+      x.sum - y.sum
+
+  val listOfList = List(List(1, 2), List(1, 2, 3, 4, 5, 6), List(5, 6, 7, 8, 9, 0))
+  val orderNested = listOfList.sorted
+
+  // generics
+
+  given listOrderingOnCombinator[A](using ord: Ordering[A])(
+      using combinator: Combinator[A]
+  ): Ordering[List[A]] with
+    override def compare(x: List[A], y: List[A]) =
+      ord.compare(combineAll(x), combineAll(y))
+
   @main def run =
     println("-" * 50)
-    println(combineAllPeople)
+    // println(combineAllPeople)
+    println(orderNested)
     println("-" * 50)
