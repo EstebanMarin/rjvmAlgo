@@ -78,7 +78,7 @@ given optinoOrderin_V3[A: Ordering]: Ordering[Option[A]] with
 def fetchGiven[A](using theValue: A): A =
   theValue
 
-@main def run =
+def run =
   println("-" * 50)
   // println(combineAllPeople)
   // println(orderNested)
