@@ -69,6 +69,24 @@ object ExtensionMethods:
           case Leaf(value) => value
           case Branch(left, right) => combinator.combine(left.combineAll, right.combineAll)
 
+  case class Purchase(nUnits: Int, unitPrice: Double)
+  object Purchase:
+    given totalPriceOrdering: Ordering[Purchase] with
+      override def compare(x: Purchase, y: Purchase) =
+        val xTotalPrice = x.nUnits * x.unitPrice
+        val yTotalPrice = y.unitPrice * y.unitPrice
+        if (xTotalPrice == yTotalPrice) 0
+        else if (xTotalPrice < yTotalPrice) -1
+        else 1
+
+  object UnitCountOrdering:
+    given unitCountOrdering: Ordering[Purchase] =
+      Ordering.fromLessThan((x, y) => y.nUnits > x.nUnits)
+
+  object UnitPriceOrdering;
+  given unitPrioce: Ordering[Purchase] =
+    Ordering.fromLessThan((x, y) => x.unitPrice < y.unitPrice)
+
   @main def extensionMain =
     import IntExtensions.*
     import TreeExtentions.*
