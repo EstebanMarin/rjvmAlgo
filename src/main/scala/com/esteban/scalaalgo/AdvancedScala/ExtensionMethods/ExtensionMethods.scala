@@ -87,7 +87,7 @@ object ExtensionMethods:
   given unitPrioce: Ordering[Purchase] =
     Ordering.fromLessThan((x, y) => x.unitPrice < y.unitPrice)
 
-  @main def extensionMain =
+  def extensionMain =
     import IntExtensions.*
     import TreeExtentions.*
 
