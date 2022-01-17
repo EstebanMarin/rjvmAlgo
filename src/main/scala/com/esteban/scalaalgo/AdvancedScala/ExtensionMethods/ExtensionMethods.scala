@@ -48,14 +48,40 @@ object ExtensionMethods:
         // continua la iteracino
         if (n == 0 || n == 1 || n == -1) false else isPrimeTailRec(2)
 
+    sealed abstract class Tree[A]
+    case class Leaf[A](value: A) extends Tree[A]
+    case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+
+    object TreeExtentions:
+      extension (tree: Tree[Int])
+        def sum: Int = tree match
+          case Leaf(value) => value
+          case Branch(left, right) => left.sum + right.sum
+
+      extension [A](tree: Tree[A])
+        def map[B](f: A => B): Tree[B] = tree match
+          case Leaf(value) => Leaf(f(value))
+          case Branch(left, right) => Branch(left.map(f), right.map(f))
+        def forall(predicate: A => Boolean): Boolean = tree match
+          case Leaf(value) => predicate(value)
+          case Branch(left, right) => left.forall(predicate) && right.forall(predicate)
+        def combineAll(using combinator: Combinator[A]): A = tree match
+          case Leaf(value) => value
+          case Branch(left, right) => combinator.combine(left.combineAll, right.combineAll)
+
   @main def extensionMain =
     import IntExtensions.*
+    import TreeExtentions.*
 
     val listInt: List[Int] = List(1, 2, 3, 4, 5)
+    val aTree = Branch(Branch(Leaf(3), Leaf(1)), Leaf(10))
+
     println("-" * 50)
     println("Esteban".greetAsPerson)
     println(listInt.ends)
-    println(listInt.combineAll)
     println(7.isPrime)
     println(6.isPrime)
+    println(aTree.forall(_ % 2 == 0))
+    println(aTree.sum)
+    // println(aTree.combineAll)
     println("-" * 50)
