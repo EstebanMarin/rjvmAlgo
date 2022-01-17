@@ -1,5 +1,6 @@
 package com.esteban.scalaalgo.AdvancedScala.ExtensionMethods
 
+import scala.annotation.tailrec
 import scala.util.CommandLineParser.FromString.given_FromString_Int
 
 object ExtensionMethods:
