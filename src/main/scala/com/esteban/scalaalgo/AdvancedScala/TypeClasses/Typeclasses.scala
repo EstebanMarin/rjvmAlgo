@@ -28,6 +28,16 @@ object Typeclasses:
   // given dateSerializer: HTMLSerializer[Date] with
   //   override def serialize(date: Date) = s"<div>${date.toString()}</div>"
 
+  def serialize[T](value: T)(using serializer: HTMLSerializer[T]): String =
+    serializer.serialized(value)
+
+  object HTMLSyntax:
+    extension [T](value: T)
+      def toHtml(using serializer: HTMLSerializer[T]): String = serializer.serialized(value)
+
+  import HTMLSyntax.*
+  val boHTML4 = bobUser.toHtml
+
   @main def typeMain =
     println("-" * 50)
     println(bob)
