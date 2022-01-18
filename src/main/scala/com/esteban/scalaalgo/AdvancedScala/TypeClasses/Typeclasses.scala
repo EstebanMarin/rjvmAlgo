@@ -38,7 +38,7 @@ object Typeclasses:
   import HTMLSyntax.*
   val boHTML4 = bobUser.toHtml
 
-  @main def typeMain =
+  def typeMain =
     println("-" * 50)
     println(bob)
     println("-" * 50)
