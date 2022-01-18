@@ -21,9 +21,12 @@ object Typeclasses:
       val User(name, age, email) = value
       s"<div>$name $age yo <a href=$email/></div>"
 
-
   val bobUser = User("bob", 46, "bob@com.com")
   val bob: String = userSerializer.serialized(bobUser)
+
+  // import java.util.Date
+  // given dateSerializer: HTMLSerializer[Date] with
+  //   override def serialize(date: Date) = s"<div>${date.toString()}</div>"
 
   @main def typeMain =
     println("-" * 50)
