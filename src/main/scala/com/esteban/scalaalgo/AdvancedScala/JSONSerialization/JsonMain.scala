@@ -43,7 +43,7 @@ object JSONSerialization:
     )
   )
 
-  @main def JsonMain =
+  def JsonMain =
     println("-" * 50)
     println(data.toString)
     println("-" * 50)
