@@ -7,13 +7,18 @@ object ParthDependentTypes:
       class Inner
       object InnerObject
       type InnerType
+      def process(arg: Inner) = println(arg)
 
-  val outer: Outer = new Outer
-  val inner: com.esteban.scalaalgo.AdvancedScala.PathDependentTypes.ParthDependentTypes.outer.Inner.type = outer.Inner 
+  val outer = new Outer
+  val inner = new outer.Inner 
 
   val outerA = new Outer
   val outerB = new Outer
-  val inner2: outerA.Inner = new outerB.Inner
+/*   val inner2: outerA.Inner = new outerB.Inner */
+
+  val innerA = new outerA.Inner
+  val innerB = new outerB.Inner
+
   
   @main def PathMain =
     println("-" * 50)
