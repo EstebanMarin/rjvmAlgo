@@ -5,42 +5,41 @@ import com.esteban.scalaalgo.AdvancedScala.PathDependentTypes.ParthDependentType
 
 object ParthDependentTypes:
   class Outer:
-      class Inner
-      object InnerObject
-      type InnerType
-      def process(arg: Inner) = println(arg)
-      def processGeneral(arg: Outer#Inner) = println(arg)
+    class Inner
+    object InnerObject
+    type InnerType
+    def process(arg: Inner) = println(arg)
+    def processGeneral(arg: Outer#Inner) = println(arg)
 
   val outer = new Outer
-  val inner = new outer.Inner 
+  val inner = new outer.Inner
 
   val outerA = new Outer
   val outerB = new Outer
-//   val inner2: outerA.Inner = new outerB.Inner 
+//   val inner2: outerA.Inner = new outerB.Inner
 
   val innerA = new outerA.Inner
   val innerB = new outerB.Inner
-
 
 //   outerA.process(innerB) // compilation error
   outerA.process(innerA)
   outer.process(inner)
 
-  //parent type: Outer#Inner
+  // parent type: Outer#Inner
   outerA.processGeneral(innerA)
   outerA.processGeneral(innerB) // outer.inner <: Outer#Inner
-  //type level programming
+  // type level programming
   trait Record:
-      type Key
-      def defaultValue: Key
+    type Key
+    def defaultValue: Key
 
   class StringRecord extends Record:
-      override type Key = String
-      override def defaultValue = ""
+    override type Key = String
+    override def defaultValue = ""
 
   class IntRecord extends Record:
-      override type Key = Int
-      override def defaultValue = 0
+    override type Key = Int
+    override def defaultValue = 0
 
   def getDefaultValue(record: Record): record.Key = record.defaultValue
 
@@ -53,4 +52,3 @@ object ParthDependentTypes:
   @main def PathMain =
     println("-" * 50)
     println("-" * 50)
-
