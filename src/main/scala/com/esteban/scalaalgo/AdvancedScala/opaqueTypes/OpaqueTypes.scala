@@ -8,8 +8,9 @@ object OpaqueTypes:
     opaque type Name = String
     object Name:
       def apply(stg: String): Name = stg
-    extension (name: Name)
-      def length: Int = name.length
+
+    extension (name: Name) def length: Int = name.length
+
     // inside Name <-> String
     def addFriend(person: Name, person2: Name): Boolean =
       person.length == person2.length
@@ -27,7 +28,7 @@ object OpaqueTypes:
     val Green: Color = 0x00ff000
     val Blue: Color = 0x00000ff
     val halfTransperancy: ColorFilter = 0x88
-   
+
   import Graphics.*
   val aName: Name = Name("Esteban")
   val nameLength: Int = aName.length
