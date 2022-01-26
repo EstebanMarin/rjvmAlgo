@@ -1,8 +1,11 @@
 package com.esteban.scalaalgo.AdvancedScala.variance
 
+
 object Variance:
   class Animal
   case class Dog(name: String) extends Animal
+  case class Cat(name: String) extends Animal
+  case class Crocodile(name: String) extends Animal
 
   class MyList[+A]
 
@@ -24,3 +27,10 @@ object Variance:
         - if your type CONSUMES or ACTS ON a value CONTRAVARIANT
         - Otherwise INVARIANT
  */
+
+    class Cage[A <: Animal]
+    val aRealCage: Cage[Dog] = new Cage[Dog]
+
+    @main def VarianceMain =
+        println("-" * 50)
+        println("-" * 50)
