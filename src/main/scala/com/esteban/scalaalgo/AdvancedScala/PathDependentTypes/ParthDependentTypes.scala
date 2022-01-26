@@ -14,11 +14,14 @@ object ParthDependentTypes:
 
   val outerA = new Outer
   val outerB = new Outer
-/*   val inner2: outerA.Inner = new outerB.Inner */
+//   val inner2: outerA.Inner = new outerB.Inner 
 
   val innerA = new outerA.Inner
   val innerB = new outerB.Inner
 
+
+//   outerA.process(innerB)
+  outerA.process(innerA)
   
   @main def PathMain =
     println("-" * 50)
