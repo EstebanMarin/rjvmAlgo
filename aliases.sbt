@@ -16,7 +16,7 @@ addCommandAlias(
   "scalafmtSbtCheck; scalafmtCheckAll",
 )
 addCommandAlias(
-  "styleFix",
+  "fj",
   "scalafmtSbt; scalafmtAll",
 )
 addCommandAlias(
@@ -39,6 +39,6 @@ onLoadMessage +=
       |│ ${styled("rs")}          │ reStart           │
       |│ ${styled("s")}           │ reStop            │
       |│ ${styled("styleCheck")}  │ fmt check         │
-      |│ ${styled("styleFix")}    │ fmt               │
+      |│ ${styled("fj")}          │ fmt               │
       |│ ${styled("up2date")}     │ dependencyUpdates │
       |╰─────────────┴───────────────────╯""".stripMargin
