@@ -27,18 +27,17 @@ object Variance:
         - Otherwise INVARIANT
    */
 
-   // COVARIANT
+  // COVARIANT
   class Cage[A <: Animal]
 
-  //Wierd container
+  // Wierd container
   class Cage2[A >: Animal]
   val aRealCage: Cage[Dog] = new Cage[Dog]
 
   abstract class LList[+A]:
-      def head: A
-      def tail: LList[A]
-      def add[B >: A](element: B):LList[B]
-
+    def head: A
+    def tail: LList[A]
+    def add[B >: A](element: B): LList[B] //widen the type
 
   @main def VarianceMain =
     println("-" * 50)
