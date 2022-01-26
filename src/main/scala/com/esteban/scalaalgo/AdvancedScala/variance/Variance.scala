@@ -1,6 +1,5 @@
 package com.esteban.scalaalgo.AdvancedScala.variance
 
-
 object Variance:
   class Animal
   case class Dog(name: String) extends Animal
@@ -21,16 +20,20 @@ object Variance:
 
   val healLassie = myVet.heal(lassie)
 
-/*
+  /*
     Rule of thumb:
         - if your type PRODUCES or Retreives a value. Then it should be COVARIANT
         - if your type CONSUMES or ACTS ON a value CONTRAVARIANT
         - Otherwise INVARIANT
- */
+   */
 
-    class Cage[A <: Animal]
-    val aRealCage: Cage[Dog] = new Cage[Dog]
+   // COVARIANT
+  class Cage[A <: Animal]
 
-    @main def VarianceMain =
-        println("-" * 50)
-        println("-" * 50)
+  //Wierd container
+  class Cage2[A >: Animal]
+  val aRealCage: Cage[Dog] = new Cage[Dog]
+
+  @main def VarianceMain =
+    println("-" * 50)
+    println("-" * 50)
