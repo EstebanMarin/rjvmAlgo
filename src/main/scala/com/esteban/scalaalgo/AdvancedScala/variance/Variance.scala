@@ -39,6 +39,6 @@ object Variance:
     def tail: LList[A]
     def add[B >: A](element: B): LList[B] //widen the type
 
-  @main def VarianceMain =
+  def VarianceMain =
     println("-" * 50)
     println("-" * 50)
