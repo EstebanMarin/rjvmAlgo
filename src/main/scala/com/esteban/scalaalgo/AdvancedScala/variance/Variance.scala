@@ -34,6 +34,12 @@ object Variance:
   class Cage2[A >: Animal]
   val aRealCage: Cage[Dog] = new Cage[Dog]
 
+  abstract class LList[+A]:
+      def head: A
+      def tail: LList[A]
+      def add[B >: A](element: B):LList[B]
+
+
   @main def VarianceMain =
     println("-" * 50)
     println("-" * 50)
