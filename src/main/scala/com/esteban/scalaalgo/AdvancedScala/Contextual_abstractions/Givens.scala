@@ -13,7 +13,7 @@ object Givens:
 
   }
 
-  val orderedPeople = people.sorted
+  // val orderedPeople = people.sorted
 
   trait Combinator[A]:
     def combine(x: A, y: A): A
@@ -42,7 +42,7 @@ object Givens:
       x.sum - y.sum
 
   val listOfList = List(List(1, 2), List(1, 2, 3, 4, 5, 6), List(5, 6, 7, 8, 9, 0))
-  val orderNested = listOfList.sorted
+  val orderNested = listOfList
 
   // generics
 

@@ -1,4 +1,4 @@
-package com.esteban.scalaalgo.String
+package com.esteban.scalaalgo.Algo.String
 
 import java.lang.reflect.Parameter
 

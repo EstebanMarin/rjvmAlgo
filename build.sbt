@@ -56,6 +56,8 @@ lazy val commonScalacOptions = Seq(
 lazy val dependencies = Seq(
   libraryDependencies ++= Seq(
     // main dependencies
+    org.cats.catsEffect,
+    org.cats.cats
   ),
   libraryDependencies ++= Seq(
     org.scalatest.scalatest,
